@@ -1,0 +1,122 @@
+# Modeling geometry of engine mount
+# Author: Miloš D. Petrašinović <mpetrasinovic@mas.bg.ac.rs>
+# Structural Analysis of Flying Vehicles
+# Faculty of Mechanical Engineering, University of Belgrade
+# Department of Aerospace Engineering, Flying structures
+# https://vazmfb.com
+# Belgrade, 2021
+# 
+# --------------------
+#
+# Copyright (C) 2021 Milos Petrasinovic <info@vazmfb.com>
+# 
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Lesser General Public License as 
+# published by the Free Software Foundation, either version 3 of the 
+# License, or (at your option) any later version.
+#  
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Lesser General Public License for more details.
+#  
+# You should have received a copy of the GNU Lesser General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+#
+# ----- PARAMETERS -----
+# Coordinates of nodes
+# nc[node] = [x, y, z];
+nc = [[0, 0, 0], # node 1
+      [0, 700, 0], # node 2
+      [0, 0, 700], # node 3
+      [0, 700, 700], # node 4
+      [1200, 0, 350], # node 5
+      [1200, 700, 350], # node 6
+      [300, 37.5, 350], # node 7
+      [300, 662.5, 350], # node 8
+      [900, 350, 37.5], # node 9
+      [900, 350, 662.5]]; # node 10
+# Nodes of engine mount rods
+# enn[element] = [node1, node2];
+enn = [[1, 7], # rod 1
+       [3, 7], # rod 2
+       [2, 8], # rod 3
+       [4, 8], # rod 4
+       [5, 10], # rod 5
+       [5, 9], # rod 6
+       [6, 10], # rod 7
+       [6, 9]]  # rod 8
+# Nodes of rods that simulates engine (infinitely rigid rods)
+# enm[element] = [node1, node2];
+enm = [[7, 8], # engine rod 1
+       [8, 9], # engine rod  2
+       [9, 7], # engine rod  3
+       [7, 10], # engine rod  4
+       [10, 8], # engine rod  5
+       [10, 9]] # engine rod  6
+# --------------------
+
+__Name__ = 'engineMountGeometry'
+__Comment__ = 'Modeling geometry of engine mount'
+__Author__ = 'Miloš Petrašinović'
+__Version__ = '1.0.0'
+__Date__ = '2021-12-12'
+__License__ = 'LGPL-3.0-or-later'
+__Web__ = "https://github.com/VAZMFB/Engine-Mount-FEM/"
+__Wiki__ = ''
+__Icon__ = ''
+__Help__ = 'Modeling geometry of engine mount'
+__Status__ = 'stable'
+__Requires__ = 'Freecad >= 0.18.4'
+__Communication__ = 'https://github.com/VAZMFB/Engine-Mount-FEM/issues/'
+__Files__ = ''
+
+import FreeCAD as App
+import FreeCADGui as Gui
+import Part
+
+activeDocument = App.ActiveDocument;
+activeDocumentGui = Gui.ActiveDocument;
+c = [[0.0000, 0.4470, 0.7410], # color order
+     [0.8500, 0.3250, 0.0980],
+     [0.9290, 0.6940, 0.1250],
+     [0.4940, 0.1840, 0.5560],
+     [0.4660, 0.6740, 0.1880],
+     [0.3010, 0.7450, 0.9330],
+     [0.6350, 0.0780, 0.1840]]
+
+# Modeling of nodes
+nodes = [];
+for i in range(len(nc)):
+  node = activeDocument.addObject("Part::Vertex", "Node-"+str(i+1))
+  node.X = nc[i][0]
+  node.Y = nc[i][1]
+  node.Z = nc[i][2]
+  node.Label = "Node-"+str(i+1)
+  nodeGui = activeDocumentGui.getObject(node.Name);
+  nodeGui.PointSize = 10
+  nodeGui.PointColor = tuple(c[1])
+  nodes.append(node)
+
+# Modeling of engine mount rods
+for i in range(len(enn)):
+    rodShape = Part.makeLine(nodes[enn[i][0]-1].Shape.Point, nodes[enn[i][1]-1].Shape.Point)
+    rod = activeDocument.addObject("Part::Feature", "Rod-"+str(i+1))
+    rod.Shape = rodShape;
+    del rodShape
+    rodGui = activeDocumentGui.getObject(rod.Name);
+    rodGui.LineWidth = 3
+    rodGui.LineColor = tuple(c[1])
+    
+# Modeling of rods that simulates engine (infinitely rigid rods)
+for i in range(len(enm)):
+    rodShape = Part.makeLine(nodes[enm[i][0]-1].Shape.Point, nodes[enm[i][1]-1].Shape.Point)
+    rod = activeDocument.addObject("Part::Feature", "Engine_rod-"+str(i+1))
+    rod.Shape = rodShape
+    del rodShape
+    rodGui = activeDocumentGui.getObject(rod.Name);
+    rodGui.LineWidth = 3
+    rodGui.LineColor = tuple(c[0])
+    
+App.ActiveDocument.recompute()
+Gui.SendMsgToActiveView("ViewFit")
