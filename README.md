@@ -3,7 +3,7 @@
 Structural analysis of engine mount using finite element method.
 
 <p align="center">
-  <img src="https://vazmfb.com/web/img/github/engineMountFEM.png" width="800">
+  <img src="https://milospetrasinovic.com/web/img/vazmfb-github/engineMountFEM.png" width="800">
 </p>
 
 For more information visit https://vazmfb.com
@@ -18,7 +18,7 @@ Provided code is tested with **GNU Octave 6.4.0**.
 Adapt input parameters and run `engineMountFEM.m` with GNU Octave.
 
 ## License
-Copyright (C) 2021 Miloš Petrašinović <info@vazmfb.com>
+Copyright (C) 2021 Miloš Petrašinović <mpetrasinovic@mas.bg.ac.rs>
  
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as 
