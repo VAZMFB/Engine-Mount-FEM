@@ -6,7 +6,7 @@ Structural analysis of engine mount using finite element method.
   <img src="https://milospetrasinovic.com/web/img/vazmfb-github/engineMountFEM.png" width="800">
 </p>
 
-For more information visit https://vazmfb.com
+For more information visit http://vaz.mas.bg.ac.rs
 
 ## Requirements
 [GNU Octave](https://www.gnu.org/software/octave/)<br>
